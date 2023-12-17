@@ -1,12 +1,11 @@
 {
-    "required": ["plaintext"]
     "properties": {
         "ssn": {
             "encrypt": {
                 "keyId": [
                     {
                         "$binary": {
-                            "base64": "SRXmiJF1S6C15mam8N/O2g==",
+                            "base64": "MY5IbvjvSN+ttrHljOu4hw==",
                             "subType": "04"
                         }
                     }
@@ -14,10 +13,7 @@
                 "bsonType": "string",
                 "algorithm": "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic"
             }
-        },
-	"palintext": {
-	  bsonType : "string"
-	}
+        }
     },
     "bsonType": "object"
 }
