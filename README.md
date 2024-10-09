@@ -36,19 +36,21 @@ field's input with the CSFLE. If the client can't find the target field's encryp
 ## Procedure 
 Prerequests:
 1. Use `mongocryptd --port 27020` to start the mongocryptd instance locally
-2. Run 'go mod tidy' to install necessary local libraries
-3. Make sure localhost:27017 mongoDB instance is running  
-4. Use `go run -tags cse clinet.go` firstly, for creating local key into MongoDB key vault collection. It will generate the output as below 
+2. Run `go mod tidy` to install necessary local libraries
+3. Make sure `localhost:27017` mongoDB instance is running  
+4. Use `go run -tags cse client.go` firstly, for creating local key into MongoDB key vault collection. It will generate the output as below 
 ```bash
 data key base64 is MY5IbvjvSN+ttrHljOu4hw==, plz input fill this filed into `collection_schema_d.json`'s line8 base64 field
 create key ok!%
 ```
-Remind to replace the base64 filed value into `collection_sschema_d.json` file if u want to run `example_d.go`
+5. Replace collection_schema_d.json file's line8 with the output from step4. For runing `example_d.go` demo.
 
-### Demo CSFLE in random 
+
+### Demo CSFLE: encryption field with random value
 1. Use `go run -tags cse example.go` run the Golang application with cse tag enabled.
 
 
-### Demo CSFLE in deterministic 
+
+### Demo CSFLE: encroyption field with deterministic value
 1. Use `go run -tags cse example_d.go` run the Golang application with cse tag enabled.
 
