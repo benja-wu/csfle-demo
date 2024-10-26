@@ -21,7 +21,7 @@ var (
 )
 
 func createDataKey() {
-	kvClient, err := mongo.Connect(ctx, options.Client().ApplyURI("mongodb://localhost:27017"))
+	kvClient, err := mongo.Connect(ctx, options.Client().ApplyURI("mongodb://ben:pass7word@localhost:27017"))
 	if err != nil {
 		log.Fatal(err)
 	}

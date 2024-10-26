@@ -5,15 +5,13 @@ import (
 	"encoding/base64"
 	"fmt"
 	"log"
+	"math/rand"
 	"os"
+	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-)
-
-const (
-	uri = "mongodb://localhost:27017"
 )
 
 var (
@@ -38,17 +36,32 @@ func main() {
 
 	coll := client.Database("foo").Collection("bar")
 
+	t := time.Now()
+	r := rand.New(rand.NewSource(t.UnixNano()))
+	min := 100000
+	max := 300000
+	random_str := fmt.Sprintf("%s_%d", "determinstic encrpytion", r.Intn(max-min+1)+min)
+	fmt.Printf("before insert, prepare doc with plaintext_string: %s\n", random_str)
+	fmt.Println()
+
+	ssn := "123-00-6789"
 	// insert a document with an encrypted field and a plaintext field
 	_, err = coll.InsertOne(ctx, bson.M{
-		"plaintext": "hello world2",
-		"ssn":       "123-00-6789",
+		"plaintext_string": random_str,
+		"plaintext_num":    2,
+		"meta_info":        fmt.Sprintf("%s_%s", "hello world2", t.Format("2006-01-02 15:04:05")),
+		"ssn":              ssn,
+		"msg":              "encrpyted with deterministic type",
 	})
 	if err != nil {
 		log.Fatalf("InsertOne error: %v", err)
 	}
+	fmt.Printf("insert successfully\n")
+	fmt.Println()
 
 	// find and print the inserted document
-	res, err := coll.FindOne(ctx, bson.D{}).DecodeBytes()
+	fmt.Printf("after insert, query the doc with plaintext_string: %s\n", random_str)
+	res, err := coll.FindOne(ctx, bson.M{"plaintext_string": random_str}).DecodeBytes()
 	if err != nil {
 		log.Fatalf("FindOne error: %v", err)
 	}
@@ -61,6 +74,9 @@ func createEncryptedClient() *mongo.Client {
 	schemaMap := map[string]interface{}{
 		"foo.bar": readJSONFile("collection_schema_d.json"),
 	}
+
+	uri := os.Getenv("MONGODB_URI")
+
 	autoEncOpts := options.AutoEncryption().
 		SetKeyVaultNamespace("keyvault.datakeys").
 		SetKmsProviders(kmsProviders).
