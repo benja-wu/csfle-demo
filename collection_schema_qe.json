@@ -1,0 +1,17 @@
+[
+    {
+        "keyId": null,
+        "path": "patientRecord.ssn",
+        "bsonType": "string",
+        "queries": [
+            {
+                "queryType": "equality"
+            }
+        ]
+    },
+    {
+        "keyId": null,
+        "path": "patientRecord.billing",
+        "bsonType": "object"
+    }
+]

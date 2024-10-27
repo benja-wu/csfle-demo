@@ -4,10 +4,10 @@ import (
 	"context"
 	"encoding/base64"
 	"fmt"
+	"os"
 
 	//"io/ioutil"
 	"log"
-	//"os"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -15,18 +15,31 @@ import (
 )
 
 var (
-	ctx          = context.Background()
-	kmsProviders map[string]map[string]interface{}
-	schemaMap    bson.M
+	ctx                    = context.Background()
+	kmsProviders           map[string]map[string]interface{}
+	cryptSharedLibraryPath map[string]interface{}
+	schemaMap              bson.M
 )
 
 func createDataKey() {
-	kvClient, err := mongo.Connect(ctx, options.Client().ApplyURI("mongodb://ben:pass7word@localhost:27017"))
+	uri := os.Getenv("MONGODB_URI")
+	autoEncOpts := options.AutoEncryption().
+		SetKeyVaultNamespace("keyvault.datakeys").
+		SetKmsProviders(kmsProviders).
+		SetExtraOptions(cryptSharedLibraryPath)
+
+	clientOpts := options.Client().ApplyURI(uri).SetAutoEncryptionOptions(autoEncOpts)
+	client, err := mongo.Connect(ctx, clientOpts)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("Connect error for client with automatic encryption: %v", err)
 	}
-	clientEncryptionOpts := options.ClientEncryption().SetKeyVaultNamespace("keyvault.datakeys").SetKmsProviders(kmsProviders)
-	clientEncryption, err := mongo.NewClientEncryption(kvClient, clientEncryptionOpts)
+
+	opts := options.ClientEncryption().
+		SetKeyVaultNamespace("keyvault.datakeys").
+		SetKmsProviders(kmsProviders)
+
+	clientEncryption, err := mongo.NewClientEncryption(client, opts)
+
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -40,6 +53,10 @@ func createDataKey() {
 }
 
 func main() {
+	cryptSharedLibraryPath = map[string]interface{}{
+		"cryptSharedLibPath": os.Getenv("MDB_CRYPT_SHARED_LIB_PATH"), // Path to your Automatic Encryption Shared Library
+	}
+
 	localMasterKey := "YOm8sMifl7BUJW8vEw4UGpGKtFDIooyat4DDTDmPI+og7PsERJZVE2ldsEanYN58HhUkl8LxLjjXRyc2ctQG/Gpjg8xUqAE1XwMgyXxYnwN7MnJYSC+0msDmyMybySny"
 	decodedKey, err := base64.StdEncoding.DecodeString(localMasterKey)
 	if err != nil {
