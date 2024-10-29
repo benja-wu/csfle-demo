@@ -56,7 +56,7 @@ func ssnWithObject(coll *mongo.Collection, random_str, ssn_num string) {
 	ssn = bson.M{
 		"ssn_num": ssn_num,
 		"name":    "ben",
-		"age":     29,
+		"age":     27,
 		"address": []string{"123 Main St, Apt 4B, NY", "456 Main St, Apt B, NY"},
 	}
 	ures, err := coll.UpdateOne(
@@ -69,7 +69,7 @@ func ssnWithObject(coll *mongo.Collection, random_str, ssn_num string) {
 		},
 	)
 	if err != nil {
-		log.Fatalf("UpdateOne error: %v", res.Err())
+		log.Fatalf("UpdateOne error: %v", err)
 	}
 
 	fmt.Printf("the update result %v\n", ures)
@@ -85,9 +85,10 @@ func ssnWithObject(coll *mongo.Collection, random_str, ssn_num string) {
 
 	// Call the aggregation function
 	/*
-			if err := aggregateTagsByReportNum(coll, 9); err != nil {
-		        log.Fatalf("aggregateTagsByReportNum error: %v", err)
-	}*/
+		if err := aggregateTagsByReportNum(coll, 9); err != nil {
+			log.Fatalf("aggregateTagsByReportNum error: %v", err)
+		}
+	*/
 }
 
 func ssnWithString(coll *mongo.Collection, random_str, ssn_num string) {
@@ -99,7 +100,7 @@ func ssnWithString(coll *mongo.Collection, random_str, ssn_num string) {
 		"meta_info":        fmt.Sprintf("%s_%s", "hello world2", time.Now().Format("2006-01-02 15:04:05")),
 		"ssn":              ssn_num,
 		"altname":          "example",
-		"msg":              "encrpyted with deterministic type",
+		"msg":              "encrpyted with random type",
 	})
 	if err != nil {
 		log.Fatalf("InsertOne error: %v", err)
@@ -144,7 +145,7 @@ func main() {
 	r := rand.New(rand.NewSource(t.UnixNano()))
 	min := 100000
 	max := 300000
-	random_str := fmt.Sprintf("%s_%d", "determinstic encrpytion", r.Intn(max-min+1)+min)
+	random_str := fmt.Sprintf("%s_%d", "random encrpytion", r.Intn(max-min+1)+min)
 	fmt.Printf("before insert, prepare doc with plaintext_string: %s\n", random_str)
 
 	// Generate each part of the SSN
