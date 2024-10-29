@@ -25,7 +25,7 @@ func ssnWithObject(coll *mongo.Collection, random_str, ssn_num string) {
 	ssn := bson.M{
 		"ssn_num": ssn_num,
 		"name":    "ben",
-		"age":     35,
+		"age":     30,
 		"address": []string{"123 Main St, Apt 4B, NY", "456 Main St, Apt B, NY"},
 	}
 
@@ -120,15 +120,12 @@ func main() {
 	fmt.Printf("before insert, prepare doc with plaintext_string: %s\n", random_str)
 
 	// Generate each part of the SSN
-	/*
-		part1 := rand.Intn(900) + 100   // 3 digits, 100–999
-		part2 := rand.Intn(90) + 10     // 2 digits, 10–99
-		part3 := rand.Intn(9000) + 1000 // 4 digits, 1000–9999
+	part1 := rand.Intn(900) + 100   // 3 digits, 100–999
+	part2 := rand.Intn(90) + 10     // 2 digits, 10–99
+	part3 := rand.Intn(9000) + 1000 // 4 digits, 1000–9999
 
-		// Format as "XXX-XX-XXXX"
-		ssn := fmt.Sprintf("%03d-%02d-%04d", part1, part2, part3)
-	*/
-	ssn := "123-45-6789"
+	// Format as "XXX-XX-XXXX"
+	ssn := fmt.Sprintf("%03d-%02d-%04d", part1, part2, part3)
 	fmt.Printf("               prepare ssn: %s\n", ssn)
 	fmt.Println()
 
